@@ -39,6 +39,8 @@ class ViewController: UIViewController {
         // 4. 클래스와 프로토콜 연결
         locationManager.delegate = self
         
+        reButton.addTarget(self, action: #selector(locationButtonClicked), for: .touchUpInside)
+        
     }
     func configureAdd() {
         view.addSubview(dateLabel)
@@ -81,7 +83,6 @@ class ViewController: UIViewController {
             make.trailing.equalTo(view.safeAreaInsets).offset(-20)
             make.height.equalTo(40)
         }
-        reButton.addTarget(self, action: #selector(locationButtonClicked), for: .touchUpInside)
         
         
         if let titleLabel = areaButton.titleLabel {
@@ -154,6 +155,10 @@ class ViewController: UIViewController {
         print(#function)
         
         checkDeviceLocationAuthorization()
+        
+        let latitude = UserDefaults.standard.double(forKey: "latitude")
+        let longitude = UserDefaults.standard.double(forKey: "longitude")
+        callRequest(lat: latitude, lon: longitude)
     }
     
     func callRequest(lat: Double, lon : Double) {
@@ -248,8 +253,8 @@ extension ViewController : CLLocationManagerDelegate {
                     print("구(군): \(String(describing: address.last?.subLocality))")
                     
                     var administrativeArea = address.last?.administrativeArea
-                    let startIndex = administrativeArea?.index(administrativeArea!.startIndex, offsetBy: 0)// 사용자지정 시작인덱스
-                    let endIndex = administrativeArea?.index(administrativeArea!.startIndex, offsetBy: 2)// 사용자지정 끝인덱스
+                    let startIndex = administrativeArea?.index(administrativeArea!.startIndex, offsetBy: 0)
+                    let endIndex = administrativeArea?.index(administrativeArea!.startIndex, offsetBy: 2)
                     administrativeArea = String(administrativeArea![startIndex! ..< endIndex!])
                     let subLocality = address.last?.subLocality!
                     self.areaButton.setImage(UIImage(systemName: "paperplane.fill"), for: .normal)
@@ -259,6 +264,7 @@ extension ViewController : CLLocationManagerDelegate {
                     let latitude = UserDefaults.standard.double(forKey: "latitude")
                     let longitude = UserDefaults.standard.double(forKey: "longitude")
                     print("latitude \(latitude), longitude \(longitude)")
+                    
                     callRequest(lat: latitude, lon: longitude)
                 }
             }
